@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Properties;
 
+import javax.activation.CommandMap;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -13,6 +14,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.kimhank.ecom.CommandAction;
 
 
 
@@ -65,6 +68,12 @@ public class Controller extends HttpServlet {
 		while(keyIter.hasNext()) {
 			String command = (String)keyIter.next();
 			String className = pr.getProperty(command);
+			try {
+				Class<?> commandClass = Class.forName(className);
+				Object commandIndstance = commandClass.newInstance();
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
 		}
 			
 			
@@ -77,6 +86,7 @@ public class Controller extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		response.getWriter().append("Served at: ").append(request.getContextPath());
+		
 	}
 
 	/**
@@ -87,4 +97,16 @@ public class Controller extends HttpServlet {
 		doGet(request, response);
 	}
 
+	private void requestPro(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+		String view = null;
+		CommandAction com = null;
+		try {
+			String command = request.getRequestURI();
+			if(command.indexOf(request.getContextPath()) ==0)
+				command = command.substring(request.getContextPath().length());
+//			    com = (CommandAction)CommandMap.get(command);
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+	}
 }
