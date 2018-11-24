@@ -2,10 +2,10 @@ package com.kimhank.controller;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Properties;
+import java.util.*;
 
 import javax.activation.CommandMap;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -32,7 +32,7 @@ import com.kimhank.ecom.CommandAction;
 		})
 public class Controller extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+    private Map<String,Object> commandMap = new HashMap<>();    
     /**
      * @see HttpServlet#HttpServlet()
      */
@@ -71,8 +71,14 @@ public class Controller extends HttpServlet {
 			try {
 				Class<?> commandClass = Class.forName(className);
 				Object commandIndstance = commandClass.newInstance();
-			} catch (Exception e) {
+				commandMap.put(command, commandIndstance);
+			} catch (ClassNotFoundException e) {
 				// TODO: handle exception
+				e.printStackTrace();
+			}catch (InstantiationException e) {
+				e.printStackTrace();
+			}catch(IllegalAccessException e) {
+				e.printStackTrace();
 			}
 		}
 			
@@ -85,8 +91,8 @@ public class Controller extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-		
+//		response.getWriter().append("Served at: ").append(request.getContextPath());
+		requestPro(request, response);
 	}
 
 	/**
@@ -94,7 +100,8 @@ public class Controller extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		doGet(request, response);
+//		doGet(request, response);
+		requestPro(request, response);
 	}
 
 	private void requestPro(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
@@ -104,9 +111,14 @@ public class Controller extends HttpServlet {
 			String command = request.getRequestURI();
 			if(command.indexOf(request.getContextPath()) ==0)
 				command = command.substring(request.getContextPath().length());
-//			    com = (CommandAction)CommandMap.get(command);
-		} catch (Exception e) {
+			    com = (CommandAction)commandMap.get(command);
+			    view = com.requestPro(request, response);
+		} catch (Throwable e) {
 			// TODO: handle exception
+			e.printStackTrace();
 		}
+		request.setAttribute("cont", view);
+		RequestDispatcher dispatcher = request.getRequestDispatcher("/index.jsp");
+		dispatcher.forward(request, response);
 	}
 }
