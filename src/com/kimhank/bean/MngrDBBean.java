@@ -77,10 +77,38 @@ public class MngrDBBean {
 			if(pstmt !=null) try { pstmt.close();} catch(SQLException ex) {}
 			if(con != null) try { con.close(); } catch(SQLException ex) {}
 		}
-		
-		
 		return rtn;
 	}
 	
+	public void insertBook(MngrDataBean mbook) throws Exception{
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		
+		try {
+			con = getConnection();
+			String sql = "insert into book(book_kind,book_title,book_price,"
+					+ "book_count, author, publishing_com, publishing_date, book_image,"
+					+ "book_content, discount_rate, reg_date) values( ?,?,?,?,?,?,?,?,?,?,?)";
+			pstmt = con.prepareStatement(sql);		
+			pstmt.setString(1,mbook.getBook_kind());
+			pstmt.setString(2, mbook.getBook_title());
+			pstmt.setInt(3, mbook.getBook_price());
+			pstmt.setShort(4, mbook.getBook_count());
+			pstmt.setString(5,mbook.getAuthor());
+			pstmt.setString(6,mbook.getPublishing_com());
+			pstmt.setString(7,mbook.getPublishing_date());
+			pstmt.setString(8,mbook.getBook_image());
+			pstmt.setString(9, mbook.getBook_content());
+			pstmt.setByte(10, mbook.getDiscount_rate());
+			pstmt.setTimestamp(11, mbook.getReg_date());
+			pstmt.executeQuery();
+			
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}finally{
+			if(pstmt !=null) try { pstmt.close();} catch(SQLException ex) {}
+			if(con != null) try { con.close(); } catch(SQLException ex) {}
+		}
+	}
 	
 }
