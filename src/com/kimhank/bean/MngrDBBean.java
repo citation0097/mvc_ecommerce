@@ -111,4 +111,34 @@ public class MngrDBBean {
 		}
 	}
 	
+	public int registeredBook(String kind, String bookName, String author) throws Exception{
+		int rtn = 0;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			con = getConnection();
+			String sql = "select book_name from book"
+					+ "where book_kind = ? and book_name = ? and author = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, kind);;
+			pstmt.setString(2, bookName);
+			pstmt.setString(3,author);
+			rs = pstmt.executeQuery();
+			if(rs.next())
+				rtn = 1;
+			else
+				rtn = -1;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		} finally {
+			if(rs != null) try { rs.close();} catch(SQLException ex) {}
+			if(pstmt !=null) try { pstmt.close();} catch(SQLException ex) {}
+			if(con != null) try { con.close(); } catch(SQLException ex) {}
+		}
+		return rtn;
+	}
 }
