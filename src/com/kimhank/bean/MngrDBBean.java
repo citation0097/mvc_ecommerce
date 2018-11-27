@@ -141,4 +141,31 @@ public class MngrDBBean {
 		}
 		return rtn;
 	}
+	
+	public int getBookCount() throws Exception{
+		int rtn = 0;
+		Connection con = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			con = getConnection();
+			String sql = "select count(*) from book";
+			
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			if(rs.next())
+				rtn = rs.getInt(1);
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}finally {
+			if(rs != null) try { rs.close();} catch(SQLException ex) {}
+			if(pstmt !=null) try { pstmt.close();} catch(SQLException ex) {}
+			if(con != null) try { con.close(); } catch(SQLException ex) {}
+		}
+		return rtn;
+	}
+	
+	
 }
